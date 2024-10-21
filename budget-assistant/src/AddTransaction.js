@@ -13,12 +13,14 @@ function AddTransactionWithDate() {
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
 
-    // 當頁面加載時從 localStorage 中讀取交易紀錄
     useEffect(() => {
-        const savedTransactions = localStorage.getItem('transactions');
-        if (savedTransactions) {
-            setTransactions(JSON.parse(savedTransactions));
-        }
+        const fetchTransactions = async () => {
+            const response = await fetch('http://localhost:3001/transactions');
+            const data = await response.json();
+            setTransactions(data);
+        };
+    
+        fetchTransactions();
     }, []);
 
     // 當選擇日期或交易紀錄更新時，過濾出該日期的交易
@@ -30,43 +32,55 @@ function AddTransactionWithDate() {
     }, [selectedDate, transactions]);
 
     // 新增交易處理
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const newTransaction = {
-            id: transactions.length + 1,
             date: selectedDate.toLocaleDateString(), // 使用選擇的日期
             amount: parseFloat(amount), // 將金額轉換為數字
             description,
             type,
         };
-
-
-
-        const updatedTransactions = [...transactions, newTransaction];
-
-        // 更新所有交易紀錄
-        setTransactions(updatedTransactions);
-
-        // 保存到 localStorage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-
+    
+        // Send the new transaction to the server
+        const response = await fetch('http://localhost:3001/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newTransaction),
+        });
+    
+        const savedTransaction = await response.json();
+    
+        // Update the local state with the new transaction
+        setTransactions([...transactions, savedTransaction]);
+    
         // 清空表單
         setAmount('');
         setDescription('');
     };
 
+
     // 刪除交易的處理函數
-    const handleDeleteTransaction = (id) => {
-        // 過濾掉不需要的交易，保留其他交易
-        const updatedTransactions = transactions.filter(transaction => transaction.id !== id);
-
-        // 更新狀態
-        setTransactions(updatedTransactions);
-
-        // 更新 localStorage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+    const handleDeleteTransaction = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:3001/transactions/${id}`, {
+                method: 'DELETE',
+            });
+    
+            if (response.ok) {
+                console.log(`Transaction with id ${id} deleted successfully.`);
+                // Update the local state to remove the deleted transaction
+                setTransactions(transactions.filter(transaction => transaction._id !== id));
+            } else {
+                console.error(`Failed to delete transaction: ${await response.text()}`);
+            }
+        } catch (error) {
+            console.error(`Error deleting transaction: ${error}`);
+        }
     };
+    
 
 
     // 計算該天的總金額
@@ -120,10 +134,10 @@ function AddTransactionWithDate() {
             <h3>Transactions for {selectedDate.toLocaleDateString()}</h3>
             <ul>
                 {filteredTransactions.map((transaction) => (
-                    <li key={transaction.id}>
+                    <li key={transaction._id}>
                         {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description})
                         {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
-                        <button onClick={() => handleDeleteTransaction(transaction.id)}>Delete</button>
+                        <button onClick={() => handleDeleteTransaction(transaction._id)}>Delete</button>
                     </li>
                 ))}
             </ul>
