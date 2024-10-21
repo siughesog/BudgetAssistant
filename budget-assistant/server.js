@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://k0920687524:kevin20108@kevin01157007.9uyib.mongodb.net/budget');
+mongoose.connect('mongodb+srv://k0920687524:CbRBAOKhAkGeHwEa@cluster0.xzprk.mongodb.net/budget');
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 db.once('open', function () {
