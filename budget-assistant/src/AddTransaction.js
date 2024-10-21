@@ -103,7 +103,7 @@ function AddTransactionWithDate() {
 
             <form onSubmit={handleSubmit}>
                 <label>
-                    Amount:
+                    <span style={{ fontSize: '25px' }}>Amount</span>:
                     <input
                         type="number"
                         value={amount}
@@ -112,7 +112,7 @@ function AddTransactionWithDate() {
                     />
                 </label>
                 <label>
-                    Description:
+                <span style={{ fontSize: '25px' }}>Description</span>:
                     <input
                         type="text"
                         value={description}
@@ -120,8 +120,9 @@ function AddTransactionWithDate() {
 
                     />
                 </label>
-                <label>
-                    Type:
+                <br />
+                <label style={{ fontSize: '25px' }}>
+                Type:
                     <select value={type} onChange={(e) => setType(e.target.value)}>
                         <option value="income">Income</option>
                         <option value="expense">Expense</option>
