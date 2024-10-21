@@ -127,7 +127,7 @@ function AddTransactionWithDate() {
                         <option value="expense">Expense</option>
                     </select>
                 </label>
-                <button type="submit">Add Transaction</button>
+                <button class="btn btn-info" type="submit">Add Transaction</button>
             </form>
 
             {/* 顯示選擇日期的交易紀錄 */}
@@ -154,7 +154,7 @@ function AddTransactionWithDate() {
                 <option value="year">Year</option>
             </select>
 
-            <button onClick={() => {
+            <button class="btn btn-danger" onClick={() => {
                 const { incomeTotal, expenseTotal } = calculateTotalsForRange(transactions, queryRange);
                 console.log(`Income: ${incomeTotal}, Expense: ${expenseTotal}`);
             }}>

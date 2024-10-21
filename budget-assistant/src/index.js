@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import LoginRegister from './LoginRegister';
 import AddTransaction from './AddTransaction';
 import EditTransaction from './EditTransaction';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // import 
 // import reportWebVitals from '../../trash/reportWebVitals';
 
