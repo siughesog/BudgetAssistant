@@ -80,10 +80,11 @@ function AddTransactionWithDate() {
             <h2>Select Date and Add Transaction</h2>
 
             {/* 日期選擇器，讓使用者選擇日期 */}
-            <DatePicker
+            <DatePicker 
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)} // 當日期改變時更新選擇的日期
                 dateFormat="yyyy/MM/dd"
+                inline
             />
 
             <form onSubmit={handleSubmit}>
