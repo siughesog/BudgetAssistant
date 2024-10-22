@@ -14,6 +14,7 @@ function AddTransactionWithDate() {
     const [transactions, setTransactions] = useState([]); // 所有交易紀錄
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
+    const [editingTransactions, setEditingTransactions] = useState([]);
 
     // 從後端獲取交易資料
     useEffect(() => {
@@ -75,6 +76,13 @@ function AddTransactionWithDate() {
         setAmount('');
         setDescription('');
     };
+
+    const handleEditTransaction = (transaction) =>{
+        setAmount(transaction.amount.toString());
+        setDescription(transaction.description);
+        setEditingTransactions(transaction._id);
+    }
+
 
     // 刪除交易處理
     const handleDeleteTransaction = async (id) => {
@@ -167,7 +175,8 @@ function AddTransactionWithDate() {
                     <li key={transaction._id}>
                         {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description})
                         {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
-                        <button onClick={() => handleDeleteTransaction(transaction._id)}>Delete</button>
+                        
+                        <button onClick={() => handleDeleteTransaction(transaction._id)}>刪除</button>
                     </li>
                 ))}
             </ul>
