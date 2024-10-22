@@ -8,6 +8,7 @@ import AddTransaction from './AddTransaction';
 // import EditTransaction from './EditTransaction';
 import Signup from './Signup'
 import Login from './Login'; 
+import ForgotPassword from './ForgotPassword';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import 
 // import reportWebVitals from '../../trash/reportWebVitals';
@@ -19,6 +20,7 @@ root.render(
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/sign-up" element = {<Signup />} />
+        <Route path="forgot-password" element={<ForgotPassword />}/>
         <Route path="/add-transaction" element={<AddTransaction/>} />
       </Routes>
     </Router>

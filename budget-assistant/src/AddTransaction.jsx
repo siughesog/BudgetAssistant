@@ -100,7 +100,7 @@ function AddTransactionWithDate() {
 
     return (
         <div>
-            <h2>Select Date and Add Transaction</h2>
+            <h2>請選擇日期，紀錄您的帳務~</h2>
 
             {/* 日期選擇器，讓使用者選擇日期 */}
             <DatePicker
@@ -112,7 +112,7 @@ function AddTransactionWithDate() {
 
             <form onSubmit={handleSubmit}>
                 <label>
-                    Amount:
+                    金額(Amount):
                     <input
                         type="number"
                         value={amount}
@@ -121,7 +121,7 @@ function AddTransactionWithDate() {
                     />
                 </label>
                 <label>
-                    Description:
+                    描述(Description):
                     <input
                         type="text"
                         value={description}
@@ -129,13 +129,13 @@ function AddTransactionWithDate() {
                     />
                 </label>
                 <label>
-                    Type:
+                    種類(Type):
                     <select value={type} onChange={(e) => setType(e.target.value)}>
-                        <option value="expense">Expense</option>
-                        <option value="income">Income</option>
+                        <option value="expense">支出(Expense)</option>
+                        <option value="income">收入(Income)</option>
                     </select>
                 </label>
-                <button className="btn btn-info" type="submit">Add Transaction</button>
+                <button className="btn btn-info" type="submit">記帳</button>
             </form>
 
             {/* 篩選日期範圍的部分 */}
@@ -153,7 +153,7 @@ function AddTransactionWithDate() {
             />
 
             {/* 顯示篩選後的交易紀錄 */}
-            <h3>Transactions from {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}</h3>
+            <h3>以下是您從{startDate.toLocaleDateString()} 到 {endDate.toLocaleDateString()} 的帳務~</h3>
             <ul>
                 {filteredTransactions.map((transaction) => (
                     <li key={transaction._id}>
@@ -165,8 +165,8 @@ function AddTransactionWithDate() {
             </ul>
 
             {/* 顯示該天的總金額 */}
-            <h3>總共賺到：{incomeTotal}</h3>
-            <h3>總共花費：{expenseTotal}</h3>
+            <h3>您總共賺到：{incomeTotal}元</h3>
+            <h3>您總共花費：{expenseTotal}元</h3>
             <h1>淨值   ：{netTotal}</h1>
 
             {/* 範圍查詢 */}
