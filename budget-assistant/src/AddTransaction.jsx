@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { filterTransactionsByRange, calculateTotalsForRange } from './transactionUtils';
+import { calculateTotalsForRange } from '../UnusedFile/transactionUtils';
 
 function AddTransactionWithDate() {
     const [selectedDate, setSelectedDate] = useState(new Date()); // 預設為今天的日期
@@ -13,8 +13,8 @@ function AddTransactionWithDate() {
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
 
-
-    useEffect(() => { // 後端版
+    // 從後端獲取交易資料
+    useEffect(() => { 
         const fetchTransactions = async () => {
             const response = await fetch('http://localhost:3001/transactions');
             const data = await response.json();
@@ -22,7 +22,6 @@ function AddTransactionWithDate() {
         };
     
         fetchTransactions();
-
     }, []);
 
     // 當選擇日期或交易紀錄更新時，過濾出該日期的交易
@@ -34,44 +33,73 @@ function AddTransactionWithDate() {
     }, [selectedDate, transactions]);
 
     // 新增交易處理
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const newTransaction = {
-            id: transactions.length + 1,
             date: selectedDate.toLocaleDateString(), // 使用選擇的日期
             amount: parseFloat(amount), // 將金額轉換為數字
             description,
             type,
         };
 
+        // <<<<<<< Using Backend (Fetch API)
+        // 透過API將交易儲存到後端資料庫
+        const response = await fetch('http://localhost:3001/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newTransaction),
+        });
+    
+        const savedTransaction = await response.json();
+    
+        // 更新狀態
+        setTransactions([...transactions, savedTransaction]);
+        // =======
+        // // 更新所有交易紀錄，使用 localStorage
+        // const updatedTransactions = [...transactions, newTransaction];
 
+        // // 保存到 localStorage
+        // localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
 
-        const updatedTransactions = [...transactions, newTransaction];
-
-        // 更新所有交易紀錄
-        setTransactions(updatedTransactions);
-
-        // 保存到 localStorage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-
+        // // 更新狀態
+        // setTransactions(updatedTransactions);
+        // >>>>>>> Using LocalStorage (This section will be removed)
+    
         // 清空表單
         setAmount('');
         setDescription('');
     };
 
-    // 刪除交易的處理函數
-    const handleDeleteTransaction = (id) => {
-        // 過濾掉不需要的交易，保留其他交易
-        const updatedTransactions = transactions.filter(transaction => transaction.id !== id);
+    // 刪除交易處理
+    const handleDeleteTransaction = async (id) => {
+        try {
+            // <<<<<<< Using Backend (Fetch API)
+            const response = await fetch(`http://localhost:3001/transactions/${id}`, {
+                method: 'DELETE',
+            });
+    
+            if (response.ok) {
+                // 更新狀態，移除刪除的交易
+                setTransactions(transactions.filter(transaction => transaction._id !== id));
+            } else {
+                console.error(`Failed to delete transaction: ${await response.text()}`);
+            }
+           
+            // // 過濾掉不需要的交易，保留其他交易
+            // const updatedTransactions = transactions.filter(transaction => transaction.id !== id);
 
-        // 更新狀態
-        setTransactions(updatedTransactions);
+            // // 更新狀態
+            // setTransactions(updatedTransactions);
 
-        // 更新 localStorage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+            // // 更新 localStorage
+            // localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        } catch (error) {
+            console.error(`Error deleting transaction: ${error}`);
+        }
     };
-
 
     // 計算該天的總金額
     const totalCost = filteredTransactions.reduce((sum, transaction) => {
@@ -79,7 +107,6 @@ function AddTransactionWithDate() {
     }, 0);
 
     return (
-
         <div>
             <h2>Select Date and Add Transaction</h2>
 
@@ -107,7 +134,6 @@ function AddTransactionWithDate() {
                         type="text"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-
                     />
                 </label>
                 <label>
@@ -117,17 +143,17 @@ function AddTransactionWithDate() {
                         <option value="expense">Expense</option>
                     </select>
                 </label>
-                <button type="submit">Add Transaction</button>
+                <button className="btn btn-info" type="submit">Add Transaction</button>
             </form>
 
             {/* 顯示選擇日期的交易紀錄 */}
             <h3>Transactions for {selectedDate.toLocaleDateString()}</h3>
             <ul>
                 {filteredTransactions.map((transaction) => (
-                    <li key={transaction.id}>
+                    <li key={transaction._id}>
                         {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description})
                         {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
-                        <button onClick={() => handleDeleteTransaction(transaction.id)}>Delete</button>
+                        <button onClick={() => handleDeleteTransaction(transaction._id)}>Delete</button>
                     </li>
                 ))}
             </ul>
@@ -135,7 +161,7 @@ function AddTransactionWithDate() {
             {/* 顯示該天的總金額 */}
             <h3>Total Cost: {totalCost}</h3>
 
-
+            {/* 範圍查詢 */}
             <label htmlFor="queryRange">Select Range:</label>
             <select id="queryRange" value={queryRange} onChange={(e) => setQueryRange(e.target.value)}>
                 <option value="day">Day</option>
@@ -144,7 +170,7 @@ function AddTransactionWithDate() {
                 <option value="year">Year</option>
             </select>
 
-            <button onClick={() => {
+            <button className="btn btn-danger" onClick={() => {
                 const { incomeTotal, expenseTotal } = calculateTotalsForRange(transactions, queryRange);
                 console.log(`Income: ${incomeTotal}, Expense: ${expenseTotal}`);
             }}>

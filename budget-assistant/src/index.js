@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import './LoginRegister.css';
 // import App from '../../trash/App';
-import LoginRegister from './LoginRegister';
+import LoginRegister from '../UnusedFile/LoginRegister';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AddTransaction from './AddTransaction';
-import EditTransaction from './EditTransaction';
+import EditTransaction from '../UnusedFile/EditTransaction';
+import Signup from './Signup'
 import Login from './Login'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import 
@@ -17,6 +18,7 @@ root.render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/sign-up" element = {<Signup />} />
         <Route path="/add-transaction" element={<AddTransaction/>} />
       </Routes>
     </Router>
