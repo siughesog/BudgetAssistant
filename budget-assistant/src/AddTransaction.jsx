@@ -113,7 +113,7 @@ function AddTransactionWithDate() {
                         <option value="expense">Expense</option>
                     </select>
                 </label>
-                <button type="submit">Add Transaction</button>
+                <button class="btn byn-info" type="submit">Add Transaction</button>
             </form>
 
             {/* 顯示選擇日期的交易紀錄 */}
@@ -123,7 +123,7 @@ function AddTransactionWithDate() {
                     <li key={transaction.id}>
                         {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description})
                         {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
-                        <button onClick={() => handleDeleteTransaction(transaction.id)}>Delete</button>
+                        <button class="byn btn-danger" onClick={() => handleDeleteTransaction(transaction.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
