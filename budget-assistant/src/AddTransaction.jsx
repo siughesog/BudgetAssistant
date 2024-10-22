@@ -13,7 +13,7 @@ function AddTransactionWithDate() {
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
 
-    useEffect(() => {
+    useEffect(() => { // 後端版
         const fetchTransactions = async () => {
             const response = await fetch('http://localhost:3001/transactions');
             const data = await response.json();
