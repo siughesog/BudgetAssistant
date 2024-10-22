@@ -13,12 +13,16 @@ function AddTransactionWithDate() {
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
 
-    // 當頁面加載時從 localStorage 中讀取交易紀錄
-    useEffect(() => {
-        const savedTransactions = localStorage.getItem('transactions');
-        if (savedTransactions) {
-            setTransactions(JSON.parse(savedTransactions));
-        }
+
+    useEffect(() => { // 後端版
+        const fetchTransactions = async () => {
+            const response = await fetch('http://localhost:3001/transactions');
+            const data = await response.json();
+            setTransactions(data);
+        };
+    
+        fetchTransactions();
+
     }, []);
 
     // 當選擇日期或交易紀錄更新時，過濾出該日期的交易
