@@ -27,12 +27,20 @@ function AddTransactionWithDate() {
 
     }, []);
 
-    // 當選擇日期或交易紀錄更新時，過濾出該日期的交易
+
+    const resetTime = (date) => {
+        const newDate = new Date(date);
+        newDate.setHours(0, 0, 0, 0);
+        return newDate;
+    }
+
     useEffect(() => {
         const filtered = transactions.filter(
             (transaction) => {
-                const transactionDate = new Date(transaction.date).toLocaleDateString();
-                return transactionDate >= startDate.toLocaleDateString() && transactionDate <= endDate.toLocaleDateString();
+                // const transactionDate = new Date(transaction.date).toLocaleDateString();
+                // return transactionDate >= startDate.toLocaleDateString() && transactionDate <= endDate.toLocaleDateString();
+                const transactionDate = resetTime(new Date(transaction.date));
+                return transactionDate >= resetTime(startDate) && transactionDate <= resetTime(endDate);
             }
         );
         setFilteredTransactions(filtered);
