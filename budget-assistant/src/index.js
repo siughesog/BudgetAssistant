@@ -8,7 +8,6 @@ import AddTransaction from './AddTransaction';
 import EditTransaction from './EditTransaction';
 import Login from './Login'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Signup from './Signup';
 // import 
 // import reportWebVitals from '../../trash/reportWebVitals';
 
@@ -18,7 +17,6 @@ root.render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/sign-up" element={<Signup/>} />
         <Route path="/add-transaction" element={<AddTransaction/>} />
       </Routes>
     </Router>
