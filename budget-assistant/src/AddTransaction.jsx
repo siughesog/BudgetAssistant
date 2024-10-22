@@ -84,6 +84,7 @@ function AddTransactionWithDate() {
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)} // 當日期改變時更新選擇的日期
                 dateFormat="yyyy/MM/dd"
+                inline
             />
 
             <form onSubmit={handleSubmit}>
