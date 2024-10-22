@@ -167,23 +167,23 @@ function AddTransactionWithDate() {
             {/* 顯示該天的總金額 */}
             <h3>總共賺到：{incomeTotal}</h3>
             <h3>總共花費：{expenseTotal}</h3>
-            <h3>淨值   ：{netTotal}</h3>
+            <h1>淨值   ：{netTotal}</h1>
 
             {/* 範圍查詢 */}
-            <label htmlFor="queryRange">Select Range:</label>
+            {/* <label htmlFor="queryRange">Select Range:</label>
             <select id="queryRange" value={queryRange} onChange={(e) => setQueryRange(e.target.value)}>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
                 <option value="year">Year</option>
-            </select>
+            </select> */}
 
-            <button className="btn btn-danger" onClick={() => {
+            {/* <button className="btn btn-danger" onClick={() => {
                 const { incomeTotal, expenseTotal } = calculateTotalsForRange(transactions, queryRange);
                 console.log(`Income: ${incomeTotal}, Expense: ${expenseTotal}`);
             }}>
                 Query Transactions
-            </button>
+            </button> */}
         </div>
     );
 }
