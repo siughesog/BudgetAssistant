@@ -22,6 +22,8 @@ root.render(
         <Route path="/sign-up" element = {<Signup />} />
         <Route path="forgot-password" element={<ForgotPassword />}/>
         <Route path="/add-transaction" element={<AddTransaction/>} />
+        
+
       </Routes>
     </Router>
     {/* <AddTransaction /> */}

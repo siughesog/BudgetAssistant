@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import fetchGPTResponse from './Axios';
 import { calculateTotalsForRange } from './transactionUtils';
+import TransactionCharts from './TransactionCharts';
 
 function AddTransactionWithDate() {
     const [selectedDate, setSelectedDate] = useState(new Date()); // 預設為今天的日期
@@ -10,11 +11,14 @@ function AddTransactionWithDate() {
     const [endDate, setEndDate] = useState(new Date()); // 篩選的結束日期
     const [amount, setAmount] = useState(''); // 金額
     const [description, setDescription] = useState(''); // 描述
+    const [kind, setKind] = useState('');
     const [type, setType] = useState('expense'); // 交易類型，預設為支出
     const [transactions, setTransactions] = useState([]); // 所有交易紀錄
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 選擇日期的交易紀錄
     const [queryRange, setQueryRange] = useState('day');
     const [editingTransactions, setEditingTransactions] = useState([]);
+
+    
 
     // 從後端獲取交易資料
     useEffect(() => {
@@ -27,8 +31,8 @@ function AddTransactionWithDate() {
         fetchTransactions();
 
     }, []);
-
-
+    
+    
     const resetTime = (date) => {
         const newDate = new Date(date);
         newDate.setHours(0, 0, 0, 0);
@@ -51,12 +55,20 @@ function AddTransactionWithDate() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        
+        
         const newTransaction = {
             date: selectedDate.toLocaleDateString(), // 使用選擇的日期
             amount: parseFloat(amount), // 將金額轉換為數字
             description,
             type,
+            //gpt classified-------------------------------------------------------------------
+            kind: (type === 'expense')?await fetchGPTResponse(description + "是食物, 日用品, 交通, 娛樂, 健康, 教育, 服飾, 居住, 通訊, 水電, 保險, 投資, 人情, 旅遊, 其他中的哪一類，返回前述最符合的一項，只能回答二或三個字"):
+            await fetchGPTResponse(description + "是薪資、投資、副業、租金、補助、禮金、退款、其他中的哪一類，返回前述最符合的一項，只能回答二個字"),
+            //如果要使用，在Axios.jsx加上你的金鑰.-------------------------------------------
+
         };
+        
 
         // 透過API將交易儲存到後端資料庫
         const response = await fetch('http://localhost:3001/transactions', {
@@ -74,7 +86,7 @@ function AddTransactionWithDate() {
 
         // 清空表單
         setAmount('');
-        setDescription('');
+        setDescription('phone');
     };
 
     const handleEditTransaction = (transaction) =>{
@@ -115,7 +127,8 @@ function AddTransactionWithDate() {
     }, { incomeTotal: 0, expenseTotal: 0, netTotal: 0 });
 
     return (
-        <div>
+        
+            <div style={{ maxHeight: '100vh', overflowY: 'auto',width: '100vw', padding: '20px' }}>
             <h2>請選擇日期，紀錄您的帳務~</h2>
 
             {/* 日期選擇器，讓使用者選擇日期 */}
@@ -151,7 +164,7 @@ function AddTransactionWithDate() {
                         <option value="income">收入(Income)</option>
                     </select>
                 </label>
-                <button className="btn btn-info" type="submit">記帳</button>
+                <button className="tn btn-binfo" type="submit">記帳</button>
             </form>
 
             {/* 篩選日期範圍的部分 */}
@@ -169,22 +182,28 @@ function AddTransactionWithDate() {
             />
 
             {/* 顯示篩選後的交易紀錄 */}
-            <h3>以下是您從{startDate.toLocaleDateString()} 到 {endDate.toLocaleDateString()} 的帳務~</h3>
+            <h3>以下是您從 {startDate.toLocaleDateString()} 到 {endDate.toLocaleDateString()} 的帳務~</h3>
+            <div style={{ maxHeight: '300px', overflowY: 'scroll' }}>
             <ul>
-                {filteredTransactions.map((transaction) => (
-                    <li key={transaction._id}>
-                        {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description})
-                        {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
-                        
-                        <button onClick={() => handleDeleteTransaction(transaction._id)}>刪除</button>
-                    </li>
-                ))}
+                {filteredTransactions
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+                    .map((transaction) => (
+                        <li key={transaction._id}>
+                            {transaction.date}: {transaction.type} - {transaction.amount} ({transaction.description}) (分類:{transaction.kind})
+                            {/* 刪除按鈕，點擊時會調用 handleDeleteTransaction 函數 */}
+                            <button onClick={() => {
+                                handleDeleteTransaction(transaction._id);
+                            }}>刪除</button>
+                        </li>
+                    ))}
             </ul>
-
+            </div>
             {/* 顯示該天的總金額 */}
             <h3>您總共賺到：{incomeTotal}元</h3>
             <h3>您總共花費：{expenseTotal}元</h3>
             <h1>淨值   ：{netTotal}</h1>
+            {/* 顯示圖表 */}
+            <TransactionCharts transactions={filteredTransactions} />
 
             {/* 範圍查詢 */}
             {/* <label htmlFor="queryRange">Select Range:</label>
@@ -201,6 +220,7 @@ function AddTransactionWithDate() {
             }}>
                 Query Transactions
             </button> */}
+            
         </div>
     );
 }
